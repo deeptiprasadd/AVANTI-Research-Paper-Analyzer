@@ -1,0 +1,7 @@
+streamlit
+pdfplumber
+pypdf
+PyPDF2
+scikit-learn
+feedparser
+requests
