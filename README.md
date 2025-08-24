@@ -1,329 +1,125 @@
-## AVANTI – Research Paper Analyzer
+# AVANTI: Research Paper Analyzer
 
-Full Guide
-
+Live Demo: [https://avanti-research-paper-analyzer2025.streamlit.app/](https://avanti-research-paper-analyzer2025.streamlit.app/)
 
 ---
 
-Part 1: How to Use AVANTI
+## Overview
 
-Step 1: Launch the App
-
-Run the Streamlit app:
-
-In Terminal/Command Prompt: streamlit run app.py
-
-Your browser will open - https://avanti-research-paper-analyzer2025.streamlit.app/
-
-
-
-Step 2: Choose a Mode
-
-You will see two tabs:
-
-Search research papers by name
-
-Upload & summarize
-
-
-
-Step 3A: Search Research Papers (arXiv)
-
-In Search research papers by name tab:
-
-1. Enter title or keywords (e.g., “autism spectrum disorder detection”).
-
-
-2. (Sidebar) Set Max search results.
-
-
-3. Click Search.
-
-
-4. For each result, open the expander to see:
-
-Authors
-
-Published date
-
-Abstract
-
-Buttons: Open PDF and Open Abstract Page
-
-
-
-
-
-Step 3B: Upload & Summarize Your PDF
-
-In Upload & summarize tab:
-
-1. Click Choose a PDF and select your file.
-
-
-2. (Sidebar) Adjust:
-
-Max PDF pages to read
-
-Summary target length (words)
-
-
-
-3. Click Analyze PDF.
-
-
-4. AVANTI will:
-
-Read the PDF (first N pages)
-
-Detect Title, Authors, Affiliations (best-effort)
-
-Extract the core span (Abstract → References)
-
-Generate a summary (TF‑IDF + MMR)
-
-List detected references
-
-Show keywords (simple frequency-based)
-
-
-
-5. Use Download Summary to save the raw text summary.
-
-
-
-
-Step 4: Read the Outputs
-
-Metrics: pages processed, word counts, total time
-
-Paper header: title, authors, affiliations
-
-Summary: readable paragraphs
-
-Tabs:
-
-Core extract (Abstract→References) – exact span used
-
-References – detected items from last pages
-
-Keywords – top frequent terms (after stopword removal)
-
-
-
+AVANTI is a Streamlit-based tool designed to simplify research paper exploration and analysis. It allows users to search for academic papers on arXiv or upload their own PDFs to receive high-quality extractive summaries, metadata, and reference extraction.
 
 ---
 
-Part 2: Install and Run
+## Features
 
-Step 1: Requirements
+- **Search through arXiv** by paper title or keywords to view details including title, authors, abstract, and publication date.
+- **Upload PDF files** to extract:
+  - Text from the Abstract through References sections.
+  - Detected Title, Authors, and Affiliations.
+  - A clean summary generated using TF-IDF and Maximum Marginal Relevance (MMR).
+  - Extracted References and a keyword list.
 
-Python 3.9+
-
-Recommended packages (from the code):
-
-streamlit, requests, feedparser
-
-pdfplumber or pypdf/**PyPDF2` (auto‑fallback)
-
-scikit-learn
-
-
-
-Step 2: Install Dependencies
-
-pip install streamlit requests feedparser pdfplumber pypdf PyPDF2 scikit-learn
-
-Step 3: Start AVANTI
-
-streamlit run app.py
-
-Keep the terminal open while using the app.
-
-
+- **Interactive Dashboard** featuring:
+  - Core extract (Abstract → References)
+  - Reference list
+  - Keyword extraction
+  - File download of the summary
 
 ---
 
-Part 3: Workflow Diagram (Code Flow)
+## Quick Start
 
-[User]
-  ↓
-Open AVANTI in browser
-  ↓
-Choose a tab: [Search] or [Upload]
+### Search Papers via arXiv
 
-[Sidebar Settings]
-  - Max PDF pages to read
-  - Summary target length (words)
-  - Max search results (for arXiv)
+1. Navigate to the **Search research papers by name** tab.
+2. Enter keywords or a title (e.g., “autism spectrum disorder detection”).
+3. Click **Search**.
+4. Browse the results and use the **Open PDF** or **Open Abstract Page** links.
 
-[TABS]
+### Upload Your Own PDF
 
-(Search research papers by name)
-  ↓
-  text_input(query) → button("Search")
-  ↓
-  requests.get(arXiv API) → feedparser.parse()
-  ↓
-  build_arxiv_pdf_url(entry_id, pdf_url)
-  ↓
-  Expanders show metadata → link_button(Open PDF / Abstract)
-
-(Upload & summarize)
-  ↓
-  file_uploader → button("Analyze PDF")
-  ↓
-  read_pdf_text(file_bytes, max_pages)
-     ├─ pdfplumber (preferred)
-     └─ pypdf / PyPDF2 (fallback)
-  ↓
-  extract_title_authors_affils(page_texts)
-  ↓
-  slice_abstract_to_refs(all_text)
-  ↓
-  tfidf_mmr_summary(core_text, target_words, diversity=0.45)
-  ↓
-  to_paragraphs(summary)
-  ↓
-  extract_references(page_texts)
-  ↓
-  Display metrics + header + summary + tabs
-  ↓
-  download_button("summary.txt")
-
+1. Navigate to the **Upload & summarize** tab.
+2. Upload a valid PDF.
+3. Adjust settings in the sidebar:
+   - **Max PDF pages to read** (default: 40)
+   - **Summary target length (words)** (default: 900)
+   - **Max search results** (default: 6)
+4. Click **Analyze PDF** to process the file.
+5. Receive:
+   - Title, authors, and affiliations
+   - Extractive summary
+   - Metrics (word counts, processing time)
+   - Downloadable summary file
+   - Extra tabs: Core extract, References, Keywords
 
 ---
 
-Part 4: Function Descriptions
+## Technical Workflow
 
-1) read_pdf_text(file_bytes, max_pages)
+[User Action]
+↓
+Select Path → (ArXiv Search) OR (PDF Upload)
+↓
+[If PDF Upload]
+- read_pdf_text() → Extract pages
+- extract_title_authors_affils() → Detect header information
+- slice_abstract_to_refs() → Focus on core content
+↓
+tfidf_mmr_summary() → Curate summary with diversity
+to_paragraphs() → Organize summary into readable format
+↓
+extract_references() → Gather bibliographic entries
+↓
+[User Interface]
+- Display metrics
+- Render summary and additional tabs
+- Provide summary download
 
-Purpose: Extracts text from the PDF using available backend.
+  
+## Function Reference
 
-Flow:
+- **read_pdf_text(file_bytes, max_pages)**  
+  Extracts text from PDF (supports pdfplumber, pypdf, PyPDF2).
 
-Tries pdfplumber → falls back to pypdf → falls back to PyPDF2.
+- **extract_title_authors_affils(page_texts)**  
+  Auto-detects title, authors, and their affiliations.
 
-Returns: (joined_text, page_texts_list, meta) where meta = {total_pages, pages_processed}.
+- **slice_abstract_to_refs(all_text)**  
+  Extracts content from Abstract to References.
 
+- **tfidf_mmr_summary(text, target_words, diversity)**  
+  Generates an extractive summary using TF-IDF and MMR to ensure diversity.
 
-Cache: @st.cache_data for faster re-runs.
+- **to_paragraphs(text, sentences_per_para)**  
+  Formats summary into paragraphs of specified length.
 
-
-2) locate_abstract_to_references(all_text)
-
-Purpose: Finds line indices for Abstract start and References start.
-
-Logic: Regex for Abstract/References; falls back sensibly if not found.
-
-
-3) slice_abstract_to_refs(all_text)
-
-Purpose: Returns only the core text between Abstract and References.
-
-Use: Input to summarizer and keywords block.
-
-
-4) extract_title_authors_affils(page_texts)
-
-Purpose: Heuristically extracts paper title, author names, and affiliations from the first 1–2 pages.
-
-Key heuristics:
-
-Filters noise lines (ISSN/DOI/headers).
-
-Scores candidate title blocks by capitalization, length, and keywords.
-
-Parses likely author lines; detects affiliations by keywords and formats.
-
-
-
-5) strip_citations_inline(sent) / is_reference_like(sent)
-
-Purpose: Clean sentences by removing citation clutter and excluding reference-looking lines.
-
-
-6) sent_tokenize(text)
-
-Purpose: Splits long text into sentences using simple punctuation rules.
-
-Note: Filters very short fragments.
-
-
-7) tfidf_mmr_summary(text, target_words=900, diversity=0.45)
-
-Purpose: Extractive summary using TF‑IDF salience and MMR for diversity.
-
-Flow:
-
-Vectorize sentences with TfidfVectorizer(ngram_range=(1,2), stop_words='english').
-
-Rank by TF‑IDF energy; select with redundancy control (cosine similarity).
-
-Trim to target words.
-
-
-
-8) to_paragraphs(text, sentences_per_para=3)
-
-Purpose: Formats the summary into readable paragraphs.
-
-
-9) extract_references(all_pages)
-
-Purpose: Heuristic extraction of references from last pages.
-
-Patterns: [n] ... or n) ... / n. ...; de-duplicates and caps at 200.
-
-
-10) build_arxiv_pdf_url(entry_id, pdf_url)
-
-Purpose: Builds a clean arXiv PDF URL from feed fields.
-
-
-11) UI Helpers
-
-metric_row(cols, items): Renders KPI metrics in a row.
-
-normalize_spaces, join_pages: General text cleanup utilities.
-
-
+- **extract_references(all_pages)**  
+  Identifies references in the last pages in common formats.
 
 ---
 
-Part 5: Tips & Troubleshooting
+## Installation Instructions
 
-No PDF parser available: Ensure at least one of pdfplumber, pypdf, or PyPDF2 is installed.
+1. Clone the repository:
 
-Title/Authors missing: Heuristics may fail on non-standard formats; summary will still work.
+   ```
+   git clone <repository_url>
+   cd <repository_directory>
+2. Install dependencies:
+- pip install -r requirements.txt
+- streamlit run app.py
 
-Long PDFs: Increase Max PDF pages to read gradually to balance speed and coverage.
-
-Summary too short/long: Adjust Summary target length (words) in the sidebar.
-
-
-
----
-
-Part 6: File Outputs
-
-summary.txt: Raw, single‑paragraph summary (download via button).
-
-
-
----
-
-Part 7: Labels in the App
-
-Main Heading: AVANTI
-
-Subheading: Research Paper Analyzer
-
-Tabs: Search research papers by name, Upload & summarize
-
-
+3. Dependencies
+- Python ≥ 3.8
+- Streamlit
+- scikit-learn
+- feedparser
+- requests
+- pdfplumber, pypdf, or PyPDF2 (for PDF parsing)
 
 ---
 
-This guide mirrors the structure of your BNI‑Connect‑Scraper‑Extension documentation, adapted to the AVANTI app’s code and features.
+License & Attribution
+This project is released under the MIT License.
+Contributions and feedback are welcome.
 
