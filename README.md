@@ -13,7 +13,7 @@ Run the Streamlit app:
 
 In Terminal/Command Prompt: streamlit run app.py
 
-Your browser will open at http://localhost:8501
+Your browser will open - https://avanti-research-paper-analyzer2025.streamlit.app/
 
 
 
