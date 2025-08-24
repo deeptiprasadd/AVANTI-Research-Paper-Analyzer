@@ -1,4 +1,4 @@
-AVANTI – Research Paper Analyzer
+## AVANTI – Research Paper Analyzer
 
 Full Guide
 
