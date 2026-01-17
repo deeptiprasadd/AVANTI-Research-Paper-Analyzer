@@ -160,9 +160,9 @@ with st.sidebar:
 inject_custom_css(theme_choice)
 
 # --- 6. MAIN UI ---
-st.markdown(f"""<div class="title-container"><h1>AVANTI</h1><div class="subtitle">The Professional Intelligence Engine</div></div>""", unsafe_allow_html=True)
+st.markdown(f"""<div class="title-container"><h1>AVANTI</h1><div class="subtitle">Intelligent Research Paper Analyser</div></div>""", unsafe_allow_html=True)
 
-# Create the two tabs for Searching and Analyzing
+# Create the two tabs for Searching and Analysing
 tab_search, tab_analyze = st.tabs(["Global Search", "Document Analysis"])
 
 # --- SEARCH TAB ---
@@ -219,3 +219,4 @@ with tab_analyze:
                     st.markdown(summary)
                     # Let the user save the result
                     st.download_button("Download Report", summary, "Avanti_Report.md")
+
