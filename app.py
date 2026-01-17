@@ -30,7 +30,7 @@ st.set_page_config(
 )
 
 # YOUR KEY
-API_KEY = "AIzaSyABh4pFJBdx083dBEzVRwjU0vLrccV9zZc"
+API_KEY = "AIzaSyDgBHUZy0blfRpxo8tkqkL-PKie30nC7W0"
 
 # --- 3. PROFESSIONAL STYLING (CSS) ---
 
@@ -219,4 +219,5 @@ with tab_analyze:
                     st.markdown(summary)
                     # Let the user save the result
                     st.download_button("Download Report", summary, "Avanti_Report.md")
+
 
