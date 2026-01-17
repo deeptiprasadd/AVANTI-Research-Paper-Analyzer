@@ -1,125 +1,127 @@
-# AVANTI: Research Paper Analyzer
+# AVANTI — Research Intelligence Platform
 
-Live Demo: [https://avanti-research-paper-analyzer2025.streamlit.app/](https://avanti-research-paper-analyzer2025.streamlit.app/)
+**Live Demo:** [(AVANTI)](https://avanti-research-paper-analyzer2025.streamlit.app/)
 
 ---
 
 ## Overview
 
-AVANTI is a Streamlit-based tool designed to simplify research paper exploration and analysis. It allows users to search for academic papers on arXiv or upload their own PDFs to receive high-quality extractive summaries, metadata, and reference extraction.
+AVANTI is a professional-grade research intelligence platform designed to accelerate academic discovery. It bypasses complex local dependencies by integrating directly with **Google’s Gemini AI API** to provide deep, structural analysis of research papers.
+
+Unlike simple summarization tools, AVANTI generates **structured, high-quality analytical reports** featuring executive summaries, mathematical explanations, critical critiques, and real-world analogies, all presented in a clean, distraction-free interface.
 
 ---
 
-## Features
+## Key Features
 
-- **Search through arXiv** by paper title or keywords to view details including title, authors, abstract, and publication date.
-- **Upload PDF files** to extract:
-  - Text from the Abstract through References sections.
-  - Detected Title, Authors, and Affiliations.
-  - A clean summary generated using TF-IDF and Maximum Marginal Relevance (MMR).
-  - Extracted References and a keyword list.
+### Direct AI Integration
+Uses a robust **Direct API mode** to bypass local library conflicts (e.g., `google.generativeai`, `pyparsing`) for improved stability and reliability.
 
-- **Interactive Dashboard** featuring:
-  - Core extract (Abstract → References)
-  - Reference list
-  - Keyword extraction
-  - File download of the summary
+### Professional Deep-Dive Reports
+Generates structured analyses including:
+
+- **Executive Summary** — Core motivation and contributions  
+- **Technical Mechanics** — Methodology, equations, and algorithmic logic  
+- **Critical Critique** — Strengths, weaknesses, and limitations  
+- **Key Findings** — Concise, bulleted takeaways  
+
+### Adaptive Professional UI
+
+- **Visual Themes** — System Default, Light Mode, Dark Mode  
+- **Clean Design** — Centered, minimal interface optimized for readability  
+
+### Global Research Search
+
+- Integrated **arXiv** search
+- Find papers using keywords, titles, or DOI
+- Direct access to PDFs and author metadata
+
+### Customizable Analysis Controls
+
+- **Tone Selection** — Professional, Academic, ELi5  
+- **Detail Level** — Executive Brief, Standard Report, Comprehensive Deep-Dive  
 
 ---
 
 ## Quick Start
 
-### Search Papers via arXiv
+### 1. Global Search
 
-1. Navigate to the **Search research papers by name** tab.
-2. Enter keywords or a title (e.g., “autism spectrum disorder detection”).
-3. Click **Search**.
-4. Browse the results and use the **Open PDF** or **Open Abstract Page** links.
+1. Navigate to the **Global Search** tab  
+2. Enter a topic (e.g., *Generative Adversarial Networks*)  
+3. Click **Search**  
+4. Browse results with links to PDFs and author details  
 
-### Upload Your Own PDF
+---
 
-1. Navigate to the **Upload & summarize** tab.
-2. Upload a valid PDF.
-3. Adjust settings in the sidebar:
-   - **Max PDF pages to read** (default: 40)
-   - **Summary target length (words)** (default: 900)
-   - **Max search results** (default: 6)
-4. Click **Analyze PDF** to process the file.
-5. Receive:
-   - Title, authors, and affiliations
-   - Extractive summary
-   - Metrics (word counts, processing time)
-   - Downloadable summary file
-   - Extra tabs: Core extract, References, Keywords
+### 2. Deep Document Analysis
+
+1. Navigate to the **Document Analysis** tab  
+2. Upload a research paper (PDF)  
+3. Open the **Sidebar Configuration** to customize:
+   - **Tone** (e.g., Simple / ELi5)
+   - **Detail Level** (e.g., Comprehensive Deep-Dive)
+4. Click **Generate Analysis Report**
+5. Wait for AI processing (approximately 30–60 seconds)
+6. Download the final **Markdown report**
 
 ---
 
 ## Technical Workflow
 
-[User Action]
-↓
-Select Path → (ArXiv Search) OR (PDF Upload)
-↓
-[If PDF Upload]
-- read_pdf_text() → Extract pages
-- extract_title_authors_affils() → Detect header information
-- slice_abstract_to_refs() → Focus on core content
-↓
-tfidf_mmr_summary() → Curate summary with diversity
-to_paragraphs() → Organize summary into readable format
-↓
-extract_references() → Gather bibliographic entries
-↓
-[User Interface]
-- Display metrics
-- Render summary and additional tabs
-- Provide summary download
+```mermaid
+graph TD
+    A[User Uploads PDF] --> B{PDF Extraction}
+    B -->|pdfplumber| C[Raw Text]
+    B -->|pypdf| C
 
-  
+    C --> D[Configuration Check]
+    D -->|Tone & Length| E[Prompt Engineering]
+
+    E --> F{Direct API Call}
+    F -->|POST Request| G[Google Gemini 1.5 Flash]
+    G -->|JSON Response| H[Structured Markdown Report]
+
+    H --> I[Streamlit Interface]
+    I --> J[Downloadable Report]
+```
+---
+
 ## Function Reference
 
-- **read_pdf_text(file_bytes, max_pages)**  
-  Extracts text from PDF (supports pdfplumber, pypdf, PyPDF2).
+### install_basics()
 
-- **extract_title_authors_affils(page_texts)**  
-  Auto-detects title, authors, and their affiliations.
-
-- **slice_abstract_to_refs(all_text)**  
-  Extracts content from Abstract to References.
-
-- **tfidf_mmr_summary(text, target_words, diversity)**  
-  Generates an extractive summary using TF-IDF and MMR to ensure diversity.
-
-- **to_paragraphs(text, sentences_per_para)**  
-  Formats summary into paragraphs of specified length.
-
-- **extract_references(all_pages)**  
-  Identifies references in the last pages in common formats.
+Self-healing installer that automatically detects and installs missing dependencies (such as `requests`, `pdfplumber`, etc.) on the first run to prevent runtime crashes.
 
 ---
 
-## Installation Instructions
+### get_working_model()
 
-1. Clone the repository:
-
-   ```
-   git clone <repository_url>
-   cd <repository_directory>
-2. Install dependencies:
-- pip install -r requirements.txt
-- streamlit run app.py
-
-3. Dependencies
-- Python ≥ 3.8
-- Streamlit
-- scikit-learn
-- feedparser
-- requests
-- pdfplumber, pypdf, or PyPDF2 (for PDF parsing)
+Auto-discovery utility that queries the Google API to determine which Gemini model version is available for the provided API key, avoiding model resolution and versioning errors.
 
 ---
 
-License & Attribution
-This project is released under the MIT License.
-Contributions and feedback are welcome.
+### analyze_paper_direct(text, tone, length)
 
+Core analysis engine. Sends a carefully engineered prompt to the AI using direct HTTP requests, completely bypassing the unstable Python SDK.
+
+---
+
+### inject_custom_css(theme_mode)
+
+Dynamic styling utility that injects CSS variables to switch between **Light**, **Dark**, and **System** UI themes without reloading the application.
+
+---
+## Requirements
+
+Python 3.8+
+
+Google Gemini API Key (environment variable or hardcoded)
+
+Libraries:
+
+-streamlit
+-requests
+-pdfplumber
+-pypdf
+-feedparser
